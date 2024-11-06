@@ -1,34 +1,58 @@
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import React, { useState } from "react";
+import { Link } from 'react-router-dom'; // Correct for React project
+import NavLink from "./NavLink"; // A separate component for navigation links
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
+import MenuOverlay from "./MenuOverlay"; // A component for mobile menu overlay
 
-const NavBar = () => {
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
+// Fixed navLinks with correct titles and paths
+const navLinks = [
+  { title: "Home", path: "/" },
+  { title: "About", path: "/about" },
+  { title: "Settings", path: "/settings" },
+  { title: "Contact", path: "/contact" },
+];
+
+const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false); // State to manage mobile menu visibility
+
+  const toggleMenu = () => {
+    setIsOpen((prev) => !prev); // Toggle the menu open/close state
+  };
 
   return (
-    <nav className="bg-gray-200 p-4 relative">
-      <div className="flex justify-between items-center">
-        <div>
-          <Link to="/" className="text-blue-600 hover:underline mr-4">Home</Link>
-          <Link to="/list/1" className="text-blue-600 hover:underline">List 1</Link>
-          <Link to="/list/2" className="text-blue-600 hover:underline ml-4">List 2</Link>
+    <nav className="bg-[#121212] border-b border-[#33353F]">
+      <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        {/* Logo or branding */}
+        <div className="text-white text-2xl font-bold">Brand</div>
+
+        {/* Desktop Nav Links */}
+        <div className="hidden md:flex space-x-6">
+          {navLinks.map((link, index) => (
+            <NavLink key={index} href={link.path}>
+              {link.title}
+            </NavLink>
+          ))}
         </div>
-        <div>
-          <button 
-            className="text-blue-600 hover:underline" 
-            onClick={() => setDropdownOpen(!isDropdownOpen)}
+
+        {/* Mobile Menu Button (Hamburger Icon) */}
+        <div className="md:hidden">
+          <button
+            onClick={toggleMenu}
+            className="text-gray-300 hover:text-white focus:outline-none"
           >
-            More Options
+            {isOpen ? (
+              <XMarkIcon className="h-6 w-6" />
+            ) : (
+              <Bars3Icon className="h-6 w-6" />
+            )}
           </button>
-          {isDropdownOpen && (
-            <div className="absolute bg-white border shadow-lg mt-2">
-              <Link to="/settings" className="block px-4 py-2 hover:bg-gray-100">Settings</Link>
-              <Link to="/about" className="block px-4 py-2 hover:bg-gray-100">About</Link>
-            </div>
-          )}
         </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {isOpen && <MenuOverlay toggleMenu={toggleMenu} links={navLinks} />}
     </nav>
   );
 };
 
-export default NavBar;
+export default Navbar;
